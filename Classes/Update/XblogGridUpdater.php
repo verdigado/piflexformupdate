@@ -119,7 +119,7 @@ class XblogGridUpdater implements ChattyInterface, UpgradeWizardInterface
     //var_dump(__METHOD__, __LINE__, $row['pi_flexform'], $pi_flexform);
     $row['pi_flexform'] = $pi_flexform;
 
-    $prompt = 'Is updated: pid ' . $row['pid'] . ' | uid ' . $row['uid'] . PHP_EOL;
+    $prompt = '[UPDATE] pid: ' . $row['pid'] . ' | uid: ' . $row['uid'] . PHP_EOL;
     $this->output->write($prompt, true);
 
 

@@ -7,21 +7,21 @@
 
 
 
-.. _migrationShortcut:
+.. _piflexformupdate:
 
 .. figure:: ext_icon_300x300.gif
 	:width: 300px
-	:alt: EXT:migration_shortcut: Icon
+	:alt: EXT:piflexformupdate: Icon
 
 
 ==================
-Migrates shortcuts
+pi_flexform update
 ==================
 
 .. only:: html
 
 	:Classification:
-		migration_shortcut
+		piflexformupdate
 
 	:Version:
 		|release|
@@ -30,10 +30,10 @@ Migrates shortcuts
 		en
 
 	:Description:
-		Updates shortcuts. Meaningful, if you have migrated plugins and records before.
+		Updates data in pi_flexform
 
 	:Keywords:
-		cal, calendar base, calendarize, migration, news, organizer, tt_address, tt_content, tt_news
+		pi_flexform, update, xml
 
 	:Copyright:
 		2022

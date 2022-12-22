@@ -12,11 +12,14 @@
 Introduction
 ============
 
-This extension is a helper extension for your TYPO3 migrations based on CLI commands.
+This extension is a collection of special purpose upgrade wizards. 
+If you want to replace values in the pi_flexform field, you have to write your own code. 
+The existing scripts only serve as a template. So this extension is for developers only.  
 
 The extension can do this for you:
 
-* Updates the content element shortcut 
+* Upgrade wizard PiflexformupdateXblogGrid: Updates the grid of xBlog plugin main 
+  from 8|4 to 9|3 and 4|8 to 3|9, if image height is 165 pixel and width is 220 pixel. 
 
 
 **Table of Contents**

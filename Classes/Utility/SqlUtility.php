@@ -84,7 +84,8 @@ class SqlUtility
       AND     EXTRACTVALUE(
                 pi_flexform,
                 \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageWidth"]/value\'
-              ) = "220";
+              ) = "220"
+      ORDER BY pid, uid;
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
