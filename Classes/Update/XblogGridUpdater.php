@@ -4,73 +4,77 @@ declare(strict_types=1);
 
 namespace Verdigado\Piflexformupdate\Update;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use Verdigado\Piflexformupdate\Utility\PersistanceUtility;
+use Verdigado\Piflexformupdate\Utility\SqlUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Install\Updates\ChattyInterface;
 use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 /**
  * Updates content element/CType "shortcut"
  */
-class XblogGridUpdater implements UpgradeWizardInterface
+class XblogGridUpdater implements ChattyInterface, UpgradeWizardInterface
 {
 
   /**
-   * @var array
+   * @var int
    */
-  private $_migratedTables = [
-      'tt_content'   => 'tt_content'
-      , 'tt_news'      => 'tx_org_news'
-      , 'tx_cal_event' => 'tx_calendarize_domain_model_event'
-  ];
+  //private $_devPid = 160060;
+  private $_devPid = null;
 
   /**
-   * @param   string  $csvSrceRecords   Something like tt_content_srceUid,tt_content_srceUid,tt_address_srceUid
-   *
-   * @return  string  $csvDestRecords   Something like tt_content_newUid,tt_content_srceUid,tt_address_srceUid
+   * @var int
    */
-  private function _getDestRecord($csvSrceRecords): string
+  private $_quantity = null;
+
+  /**
+   * @var OutputInterface
+   */
+  public $output = null;
+
+  /**
+   * Transforms the given array to FlexForm XML
+   *
+   * @param array $input
+   * @return string
+   */
+  private function _array2xml(array $input = []): string
   {
-    $srceRecords = explode(',', $csvSrceRecords);
-    foreach ($srceRecords as $srceRecord)
-    {
-      list($srceTable, $srceUid) = $this->_getRecordsTableUid($srceRecord);
-      if (empty($srceTable))
-      {
-        $destRecords[] = $srceRecord; // Don't loose the not proper data
-        continue;
-      }
-
-      $destTable = $this->_migratedTables[$srceTable];
-      if (empty($destTable))
-      {
-        $destRecords[] = $srceRecord; // Don't loose the not proper data
-        continue;
-      }
-      $destUid       = PersistanceUtility::GetDestUid($destTable, $srceUid);
-      $destRecords[] = $destTable . '_' . $destUid;
-    }
-
-    $csvDestRecords = implode(',', $destRecords);
-
-    return $csvDestRecords;
+    $options  = [
+        'parentTagMap'      => [
+            'data'       => 'sheet',
+            'sheet'      => 'language',
+            'language'   => 'field',
+            'el'         => 'field',
+            'field'      => 'value',
+            'field:el'   => 'el',
+            'el:_IS_NUM' => 'section',
+            'section'    => 'itemType'
+        ],
+        'disableTypeAttrib' => 2
+    ];
+    $spaceInd = 2;
+    $output   = GeneralUtility::array2xml($input, '', 0, 'T3FlexForms', $spaceInd, $options);
+    $output   = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>' . LF . $output;
+    return $output;
   }
 
   /**
-   * @param   string  $srceRecord   Something like tt_content_srceUid
+   * Get quantity
    *
-   * @return  array   Params table like tt_content and uid like srceUid
+   * @return int
    */
-  private function _getRecordsTableUid($srceRecord): array
+  private function _getQuantity(): int
   {
-    $parts    = explode('_', $srceRecord);
-    $uid      = end($parts);
-    $lenTable = strlen($srceRecord) - strlen('_' . $uid);
-    $table    = substr($srceRecord, 0, $lenTable);
+    if ($this->_quantity !== null)
+    {
+      return $this->_quantity;
+    }
+    $this->_quantity = SqlUtility::SelectCountXBlogGrid($this->_devPid);
 
-    return [
-        $table,
-        $uid
-    ];
+    return (int) $this->_quantity;
   }
 
   /**
@@ -80,39 +84,46 @@ class XblogGridUpdater implements UpgradeWizardInterface
    */
   private function _update(): void
   {
-    $shortcuts = PersistanceUtility::GetShortcuts();
-    if (empty($shortcuts))
+    // Get affected records
+    $rows = SqlUtility::SelectXBlogGrid($this->_devPid);
+    foreach ((array) $rows as $row)
     {
-      return;
+      //var_dump(__METHOD__, __LINE__, $row['pid']);
+      $row = $this->_updatePiFlexform($row);
+      PersistanceUtility::UpdatePiFlexform($row);
     }
+  }
 
-    foreach ($shortcuts as $shortcut)
+  /**
+   * 
+   * @param array $row
+   * @return array $row
+   */
+  private function _updatePiFlexform($row): array
+  {
+    $arrFlexform = GeneralUtility::xml2array($row['pi_flexform']);
+    $gridValue   = $arrFlexform['data']['tmpl']['lDEF']['settings.flexform.pi1.tmpl.grid']['vDEF'];
+
+    switch ($gridValue)
     {
-      $csvSrceRecords = $shortcut['records']; // something like tt_content_srceUid,tt_content_srceUid,tt_address_srceUid
-      if (empty($csvSrceRecords))
-      {
-        continue;
-      }
-      $srceRecords = explode(',', $csvSrceRecords);
-      $destRecords = null;
-      foreach ($srceRecords as $srceRecord)
-      {
-        $destRecords[] = $this->_getDestRecord($srceRecord);    // something like tt_content_newUid,tt_content_srceUid,tt_address_srceUid
-      }
-
-      $csvDestRecords = implode(',', $destRecords);
-      if ($csvSrceRecords == $csvDestRecords)
-      {
-        continue;
-      }
-
-      //var_dump(__METHOD__, __LINE__, $csvSrceRecords, $csvDestRecords);
-      echo '[OK] uid: ' . $shortcut['uid'] . ' | pid: ' . $shortcut['pid'] . ' | ' . $csvSrceRecords . ' > ' . $csvDestRecords . PHP_EOL;
-
-      $uid     = $shortcut['uid'];
-      $records = $csvDestRecords;
-      PersistanceUtility::UpdateShortcut($uid, $records);
+      case('4'):
+        $newGridValue = '3';
+        break;
+      case('8'):
+        $newGridValue = '9';
+        break;
     }
+    $arrFlexform['data']['tmpl']['lDEF']['settings.flexform.pi1.tmpl.grid']['vDEF'] = $newGridValue;
+
+    $pi_flexform        = $this->_array2xml($arrFlexform);
+    //var_dump(__METHOD__, __LINE__, $row['pi_flexform'], $pi_flexform);
+    $row['pi_flexform'] = $pi_flexform;
+
+    $prompt = 'Is updated: pid ' . $row['pid'] . ' | uid ' . $row['uid'] . PHP_EOL;
+    $this->output->write($prompt, true);
+
+
+    return $row;
   }
 
   /**
@@ -134,7 +145,7 @@ class XblogGridUpdater implements UpgradeWizardInterface
    */
   public function getIdentifier(): string
   {
-    return 'XblogGridUpdater';
+    return 'PiflexformupdateXblogGrid';
   }
 
   /**
@@ -154,7 +165,7 @@ class XblogGridUpdater implements UpgradeWizardInterface
    */
   public function getTitle(): string
   {
-    return '[XblogGridUpdater] Updates the grid';
+    return 'EXT:piflexformupdate: Updates the xBlog grid';
   }
 
   /**
@@ -164,7 +175,22 @@ class XblogGridUpdater implements UpgradeWizardInterface
    */
   public function getDescription(): string
   {
-    return 'Updates the grid from 8|4 to 9|3, if image width is 220 pixel';
+    $quantity    = $this->_getQuantity();
+    $description = 'xBlog plugin main: Updates the grid from 8|4 to 9|3 and 4|8 to 3|9, '
+            . 'if image height is 165 pixel and width is 220 pixel. '
+            . $quantity . ' records will be updated.'
+    ;
+    return $description;
+  }
+
+  /**
+   * Setter injection for output into upgrade wizards
+   *
+   * @param OutputInterface $output
+   */
+  public function setOutput(OutputInterface $output): void
+  {
+    $this->output = $output;
   }
 
   /**
@@ -176,9 +202,12 @@ class XblogGridUpdater implements UpgradeWizardInterface
    */
   public function updateNecessary(): bool
   {
-    $updateNeeded = true;
-
-    return $updateNeeded;
+    $quantity = $this->_getQuantity();
+    if ($quantity == 0)
+    {
+      return false;
+    }
+    return true;
   }
 
 }
