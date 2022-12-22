@@ -1,0 +1,35 @@
+.. ==================================================
+.. FOR YOUR INFORMATION
+.. --------------------------------------------------
+.. -*- coding: utf-8 -*- with BOM.
+
+.. This is 'Includes.txt'. It is included at the very top of each and
+   every ReST source file in this documentation project (= manual).
+
+
+.. ==================================================
+.. DEFINE SOME TEXT ROLES
+.. --------------------------------------------------
+
+.. role::   typoscript(code)
+
+.. role::   ts(typoscript)
+   :class:  typoscript
+
+.. role::   php(code)
+
+.. highlight:: php
+
+.. role::   raw-html(raw)
+   :format: html
+
+.. ==================================================
+.. DEFINE SOME GENERAL LINKS
+.. --------------------------------------------------
+
+.. _Organiser: https://typo3-organiser.de/
+.. _xBlog: https://extensions.typo3.org/extension/xblog/
+
+.. _Organiser (Git): https://gitlab.die-netzmacher.de/typo3/org
+.. _xBlog (Git): https://gitlab.die-netzmacher.de/typo3/xBlog
+
