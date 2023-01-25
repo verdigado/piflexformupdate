@@ -15,6 +15,37 @@ class SqlUtility
 {
 
   /**
+   * @param  string $csvUids
+   * @param  int    $pid
+   * @return int
+   * @throws DBALException
+   */
+  public static function SelectCountXBlogArchive($csvUids, $pid = null): int
+  {
+    $andWherePid = '';
+    if ($pid)
+    {
+      $andWherePid = ' AND pid = ' . $pid;
+    }
+
+    $query = '
+      SELECT  COUNT(uid) AS quantity
+      FROM    tt_content
+      WHERE   _migrated_uid IN (' . $csvUids . ') 
+      ' . $andWherePid . '
+      AND     list_type = "xblog_pi1" 
+      AND     EXTRACTVALUE(
+                pi_flexform,
+                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archivee"]/value\'
+              ) NOT LIKE "1" 
+';
+
+    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
+    $row        = (array) $connection->query($query)->fetch();
+    return $row['quantity'];
+  }
+
+  /**
    * @param  int  $pid
    * @return int
    * @throws DBALException
@@ -26,7 +57,7 @@ class SqlUtility
     {
       $andWherePid = ' AND pid = ' . $pid;
     }
-    
+
     $query = '
       SELECT  COUNT(uid) AS quantity
       FROM    tt_content
@@ -52,6 +83,38 @@ class SqlUtility
     return $row['quantity'];
   }
 
+  /**
+   * @param  string $csvUids
+   * @param  int    $pid
+   * @return array
+   * @throws DBALException
+   */
+  public static function SelectXBlogArchive($csvUids, $pid = null): array
+  {
+    $andWherePid = '';
+    if ($pid)
+    {
+      $andWherePid = ' AND pid = ' . $pid;
+    }
+
+    $query = '
+      SELECT  uid,
+              pid,
+              pi_flexform
+      FROM    tt_content
+      WHERE   _migrated_uid IN (' . $csvUids . ') 
+      ' . $andWherePid . '
+      AND     list_type = "xblog_pi1" 
+      AND     EXTRACTVALUE(
+                pi_flexform,
+                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archivee"]/value\'
+              ) NOT LIKE "1" 
+';
+
+    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
+    $rows       = (array) $connection->query($query)->fetchAll();
+    return $rows;
+  }
   /**
    * @param  int  $pid
    * @return array

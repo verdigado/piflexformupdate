@@ -1,3 +1,15 @@
+0.0.2
+  23-01-25
+	Author: Dirk Wildt (verdigado eG), support@verdigado.com
+  * #v2940: [FEATURE] Update wizard for settings.flexform.pi1.profile.news.archive
+            Affected files:
+            * Classes/Update/XblogArchiveUpdater.php
+            New files:
+            * Classes
+              * Update/XblogGridUpdater.php
+              * Utility/SqlUtility.php
+            * ext_localconf.php
+
 0.0.1
   22-12-22
 	Author: Dirk Wildt (verdigado eG), support@verdigado.com
