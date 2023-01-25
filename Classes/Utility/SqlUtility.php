@@ -31,7 +31,7 @@ class SqlUtility
     $query = '
       SELECT  COUNT(uid) AS quantity
       FROM    tt_content
-      WHERE   _migrated_uid IN (' . $csvUids . ') 
+      WHERE   uid IN (' . $csvUids . ') 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1" 
       AND     EXTRACTVALUE(
@@ -102,7 +102,7 @@ class SqlUtility
               pid,
               pi_flexform
       FROM    tt_content
-      WHERE   _migrated_uid IN (' . $csvUids . ') 
+      WHERE   uid IN (' . $csvUids . ') 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1" 
       AND     EXTRACTVALUE(
