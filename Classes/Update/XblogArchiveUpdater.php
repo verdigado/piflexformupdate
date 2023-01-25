@@ -90,7 +90,7 @@ class XblogArchiveUpdater implements ChattyInterface, UpgradeWizardInterface
   private function _update(): void
   {
     // Get affected records
-    $rows = SqlUtility::SelectXBlogGrid($this->_csvUidList, $this->_devPid);
+    $rows = SqlUtility::SelectXBlogArchive($this->_csvUidList, $this->_devPid);
     foreach ((array) $rows as $row)
     {
       //var_dump(__METHOD__, __LINE__, $row['pid']);
