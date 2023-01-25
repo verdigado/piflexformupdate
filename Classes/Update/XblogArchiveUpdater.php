@@ -174,7 +174,7 @@ class XblogArchiveUpdater implements ChattyInterface, UpgradeWizardInterface
    */
   public function getTitle(): string
   {
-    return 'EXT:piflexformupdate: Updates the xBlog display archived news only';
+    return 'EXT:piflexformupdate: Updates the xBlog property "display archived news only"';
   }
 
   /**
