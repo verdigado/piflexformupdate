@@ -102,11 +102,11 @@ class SqlUtility
       FROM    tt_content
       WHERE   CType = "list" 
       ' . $andWherePid . '
-      AND     list_type = "xblog_pi1";
+      AND     list_type = "xblog_pi1"
       AND     EXTRACTVALUE(
                 pi_flexform,
                 \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
-              ) = ""
+              ) = "";
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
@@ -208,11 +208,11 @@ class SqlUtility
       FROM    tt_content
       WHERE   CType = "list" 
       ' . $andWherePid . '
-      AND     list_type = "xblog_pi1";
+      AND     list_type = "xblog_pi1"
       AND     EXTRACTVALUE(
                 pi_flexform,
                 \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
-              ) = ""
+              ) = "";
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
