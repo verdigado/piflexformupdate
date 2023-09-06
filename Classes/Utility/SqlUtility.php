@@ -103,10 +103,13 @@ class SqlUtility
       WHERE   CType = "list" 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1"
-      AND     EXTRACTVALUE(
-                pi_flexform,
-                \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
-              ) = "";
+      AND     deleted=0 
+      AND ( 
+                ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\') IS NULL
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\') = ""
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeSingle"]/value\') IS NULL
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeSingle"]/value\') = ""
+          )
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
@@ -209,10 +212,13 @@ class SqlUtility
       WHERE   CType = "list" 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1"
-      AND     EXTRACTVALUE(
-                pi_flexform,
-                \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
-              ) = "";
+      AND     deleted=0
+      AND (
+                ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\') IS NULL
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\') = ""
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeSingle"]/value\') IS NULL
+            OR  ExtractValue(pi_flexform,\'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeSingle"]/value\') = ""
+          )
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
