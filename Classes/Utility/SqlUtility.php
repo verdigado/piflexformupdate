@@ -89,7 +89,7 @@ class SqlUtility
    * @return int
    * @throws DBALException
    */
-  public static function SelectCountXBlogs($pid = null): int
+  public static function SelectCountXBlogsImagesizemode($pid = null): int
   {
     $andWherePid = '';
     if ($pid)
@@ -103,6 +103,10 @@ class SqlUtility
       WHERE   CType = "list" 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1";
+      AND     EXTRACTVALUE(
+                pi_flexform,
+                \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
+              ) = ""
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
@@ -189,7 +193,7 @@ class SqlUtility
    * @return array
    * @throws DBALException
    */
-  public static function SelectXBlogs($pid = null): array
+  public static function SelectXBlogsImagesizemode($pid = null): array
   {
     $andWherePid = '';
     if ($pid)
@@ -205,6 +209,10 @@ class SqlUtility
       WHERE   CType = "list" 
       ' . $andWherePid . '
       AND     list_type = "xblog_pi1";
+      AND     EXTRACTVALUE(
+                pi_flexform,
+                \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageSizemodeList"]/value\'
+              ) = ""
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');

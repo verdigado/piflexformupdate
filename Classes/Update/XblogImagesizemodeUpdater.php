@@ -72,7 +72,7 @@ class XblogImagesizemodeUpdater implements ChattyInterface, UpgradeWizardInterfa
     {
       return $this->_quantity;
     }
-    $this->_quantity = SqlUtility::SelectCountXBlogs($this->_devPid);
+    $this->_quantity = SqlUtility::SelectCountXBlogsImagesizemode($this->_devPid);
 
     return (int) $this->_quantity;
   }
@@ -85,7 +85,7 @@ class XblogImagesizemodeUpdater implements ChattyInterface, UpgradeWizardInterfa
   private function _update(): void
   {
     // Get affected records
-    $rows = SqlUtility::SelectXBlogs($this->_devPid);
+    $rows = SqlUtility::SelectXBlogsImagesizemode($this->_devPid);
     foreach ((array) $rows as $row)
     {
       //var_dump(__METHOD__, __LINE__, $row['pid']);
@@ -143,7 +143,7 @@ class XblogImagesizemodeUpdater implements ChattyInterface, UpgradeWizardInterfa
     $description = 'xBlog plugin main: Sets "Size in list view" to "See below [plugin]" '
       . 'and "Size in single view" to "From record [record]". '
       . $quantity . ' records will be updated. '
-      . 'ALL xBlogs will be effected! '
+      . 'All xBlogs will be effected which properties aren\'t set! '
     ;
     return $description;
   }
