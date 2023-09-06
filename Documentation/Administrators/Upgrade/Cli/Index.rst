@@ -13,6 +13,12 @@ CLI Script
 ==========
 
 
+PiflexformupdateXblogArchive
+----------------------------
+
+See "PiflexformupdateXblogGrid" below.
+
+
 PiflexformupdateXblogGrid
 -------------------------
 
@@ -30,3 +36,11 @@ You will get a report.
   [UPDATE] pid: 200691 | uid: 664941
   [UPDATE] pid: 216834 | uid: 739028 
   ...
+
+You can use also the php script: `typo3/sysext/core/bin/typo3 upgrade:run PiflexformupdateXblogGrid`
+
+
+PiflexformupdateXblogImagesizemode
+----------------------------------
+
+See "PiflexformupdateXblogGrid" above.

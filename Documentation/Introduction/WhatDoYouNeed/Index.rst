@@ -12,4 +12,5 @@
 What do you need?
 =================
 
+* TYPO3 11.5
 * TYPO3 10.4

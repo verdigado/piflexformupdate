@@ -36,7 +36,7 @@ pi_flexform update
 		pi_flexform, update, xml
 
 	:Copyright:
-		2022
+		2022-2023
 
 	:Author:
 		Dirk Wildt (verdigado eG)

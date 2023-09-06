@@ -36,7 +36,7 @@ class SqlUtility
       AND     list_type = "xblog_pi1" 
       AND     EXTRACTVALUE(
                 pi_flexform,
-                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archivee"]/value\'
+                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archive"]/value\'
               ) NOT LIKE "1" 
 ';
 
@@ -82,6 +82,33 @@ class SqlUtility
     $row        = (array) $connection->query($query)->fetch();
     return $row['quantity'];
   }
+  
+  /**
+   * @param  string $csvUids
+   * @param  int    $pid
+   * @return int
+   * @throws DBALException
+   */
+  public static function SelectCountXBlogs($pid = null): int
+  {
+    $andWherePid = '';
+    if ($pid)
+    {
+      $andWherePid = ' AND pid = ' . $pid;
+    }
+
+    $query = '
+      SELECT  COUNT(uid) AS quantity
+      FROM    tt_content
+      WHERE   CType = "list" 
+      ' . $andWherePid . '
+      AND     list_type = "xblog_pi1";
+';
+
+    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
+    $row        = (array) $connection->query($query)->fetch();
+    return $row['quantity'];
+  }
 
   /**
    * @param  string $csvUids
@@ -107,7 +134,7 @@ class SqlUtility
       AND     list_type = "xblog_pi1" 
       AND     EXTRACTVALUE(
                 pi_flexform,
-                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archivee"]/value\'
+                \'//T3FlexForms/data/sheet[@index="profile"]/language/field[@index="settings.flexform.pi1.profile.news.archive"]/value\'
               ) NOT LIKE "1" 
 ';
 
@@ -115,6 +142,7 @@ class SqlUtility
     $rows       = (array) $connection->query($query)->fetchAll();
     return $rows;
   }
+  
   /**
    * @param  int  $pid
    * @return array
@@ -149,6 +177,34 @@ class SqlUtility
                 \'//T3FlexForms/data/sheet[@index="image"]/language/field[@index="settings.flexform.pi.image.imageWidth"]/value\'
               ) = "220"
       ORDER BY pid, uid;
+';
+
+    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
+    $rows       = (array) $connection->query($query)->fetchAll();
+    return $rows;
+  }
+
+  /**
+   * @param  int  $pid
+   * @return array
+   * @throws DBALException
+   */
+  public static function SelectXBlogs($pid = null): array
+  {
+    $andWherePid = '';
+    if ($pid)
+    {
+      $andWherePid = ' AND pid = ' . $pid;
+    }
+
+    $query = '
+      SELECT  uid,
+              pid,
+              pi_flexform
+      FROM    tt_content
+      WHERE   CType = "list" 
+      ' . $andWherePid . '
+      AND     list_type = "xblog_pi1";
 ';
 
     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tt_content');
